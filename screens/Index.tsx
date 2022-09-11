@@ -1,5 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FontAwesome5 } from "@expo/vector-icons";
+
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../config/firebase";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -35,7 +38,7 @@ const TabStack = createBottomTabNavigator();
 
 function LoginScreen() {
   return (
-    <LoginStack.Navigator>
+    <LoginStack.Navigator screenOptions={{ headerShown: false }}>
       <LoginStack.Screen name="Login" component={Login} />
     </LoginStack.Navigator>
   );
@@ -57,9 +60,23 @@ function ContenScreen() {
 }
 
 function Content() {
-  const [user, setUser] = useState(true);
+  const [logged, setLogged] = useState<boolean>(false);
 
-  if (user) {
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setLogged(true);
+      } else {
+        setLogged(false);
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  if (logged) {
     return <ContenScreen />;
   } else {
     return <LoginScreen />;
