@@ -1,5 +1,7 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+
 const firebaseConfig = {
   apiKey: "AIzaSyB2NSwLB9uAcAIM5GsaSPPqRz_cPLI0-vg",
   authDomain: "app-facturas-taxi.firebaseapp.com",
@@ -11,4 +13,5 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
+export const db = getFirestore();
 export default app;
