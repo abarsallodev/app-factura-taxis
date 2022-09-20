@@ -1,22 +1,58 @@
-import { useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { FacturasList } from "../types/factura";
 import { getFacturas } from "../storage/api";
 
-export default function Facturas() {
-  const [facturasList, setFacturasList] = useState<FacturasList>();
-  const data = getFacturas();
+const Item = (factura: FacturasList) => (
+  <View>
+    <Text>{factura.cedula}</Text>
+    <Text>{factura.nombre}</Text>
+  </View>
+);
 
-  console.log(data);
+export default function Facturas() {
+  const [facturasList, setFacturasList] = useState<FacturasList[]>([]);
+
+  useEffect(() => {
+    const unsubscribe = async () => {
+      const datos = await getFacturas();
+      setFacturasList(datos);
+    };
+
+    unsubscribe();
+  }, [facturasList]);
+
+  const renderItem = (factura: FacturasList) => <Item {...factura} />;
+
   return (
     <View style={styles.container}>
-      <Text>Facturas Screen</Text>
+      <SafeAreaView>
+        <FlatList
+          data={facturasList}
+          renderItem={(item) => (
+            <Item
+              collectionId={"ssss"}
+              userId={""}
+              receipt={0}
+              cedula={""}
+              fecha={""}
+              nombre={"dddd"}
+              monto={0}
+              numeroPlaca={""}
+              numeroRegistro={""}
+              {...item}
+            />
+          )}
+          keyExtractor={(item) => item.collectionId}
+        />
+      </SafeAreaView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: 50,
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
