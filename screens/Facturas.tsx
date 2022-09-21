@@ -3,6 +3,8 @@ import { FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { FacturasList } from "../types/factura";
 import { getFacturas } from "../storage/api";
 
+import FacturaItem from "../components/FacaturaItem";
+
 const Item = (factura: FacturasList) => (
   <View>
     <Text>{factura.cedula}</Text>
@@ -22,28 +24,15 @@ export default function Facturas() {
     unsubscribe();
   }, [facturasList]);
 
-  const renderItem = (factura: FacturasList) => <Item {...factura} />;
-
   return (
     <View style={styles.container}>
       <SafeAreaView>
         <FlatList
           data={facturasList}
-          renderItem={(item) => (
-            <Item
-              collectionId={"ssss"}
-              userId={""}
-              receipt={0}
-              cedula={""}
-              fecha={""}
-              nombre={"dddd"}
-              monto={0}
-              numeroPlaca={""}
-              numeroRegistro={""}
-              {...item}
-            />
-          )}
           keyExtractor={(item) => item.collectionId}
+          renderItem={({ item, index }) => {
+            return <FacturaItem factura={item} />;
+          }}
         />
       </SafeAreaView>
     </View>
@@ -54,7 +43,7 @@ const styles = StyleSheet.create({
   container: {
     paddingTop: 50,
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#2e7d32",
     alignItems: "center",
     justifyContent: "center",
   },
