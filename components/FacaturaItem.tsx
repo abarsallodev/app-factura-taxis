@@ -10,11 +10,8 @@ export default function FacturaItem(props: Props): JSX.Element {
   const { receipt, monto } = props.factura;
   return (
     <View style={styles.container}>
-      <View style={styles.left}>
+      <View style={styles.item}>
         <Text>Fatura #: {receipt}</Text>
-      </View>
-      <View style={styles.rigth}>
-        <Text>Saldo: {monto}</Text>
       </View>
     </View>
   );
@@ -26,12 +23,15 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#ef6c00",
+    backgroundColor: "#eceff1",
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: "#babdbe",
+    borderRadius: 5,
+    padding: 15,
   },
-  left: {
-    width: "50%",
-  },
-  rigth: {
-    width: "50%",
+  item: {
+    width: "100%",
+    flex: 1,
   },
 });

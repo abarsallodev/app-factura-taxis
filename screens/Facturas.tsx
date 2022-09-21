@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import {
+  FlatList,
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { FacturasList } from "../types/factura";
 import { getFacturas } from "../storage/api";
 
@@ -26,8 +33,10 @@ export default function Facturas() {
 
   return (
     <View style={styles.container}>
-      <SafeAreaView>
+      <Text style={styles.title}>Listado de Facturas</Text>
+      <SafeAreaView style={styles.safeArea}>
         <FlatList
+          style={styles.flatList}
           data={facturasList}
           keyExtractor={(item) => item.collectionId}
           renderItem={({ item, index }) => {
@@ -41,10 +50,23 @@ export default function Facturas() {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 50,
     flex: 1,
-    backgroundColor: "#2e7d32",
+    padding: 10,
     alignItems: "center",
     justifyContent: "center",
+    marginTop: StatusBar.currentHeight || 0,
+  },
+  title: {
+    fontSize: 20,
+    textAlign: "center",
+    fontWeight: "bold",
+    marginVertical: 15,
+  },
+  safeArea: {
+    width: "100%",
+    flex: 1,
+  },
+  flatList: {
+    width: "100%",
   },
 });
