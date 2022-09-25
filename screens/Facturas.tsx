@@ -1,46 +1,81 @@
 import React, { useEffect, useState } from "react";
 import {
+  Button,
   FlatList,
+  Platform,
   SafeAreaView,
   StatusBar,
   StyleSheet,
   Text,
   View,
 } from "react-native";
-import { FacturasList } from "../types/factura";
+
+import DateTimePicker from "@react-native-community/datetimepicker";
+
+import { FacturaExt } from "../types/factura";
 import { getFacturas } from "../storage/api";
 
 import FacturaItem from "../components/FacaturaItem";
+import { FacturasProps, Routes } from "../types/navigation";
 
-const Item = (factura: FacturasList) => (
-  <View>
-    <Text>{factura.cedula}</Text>
-    <Text>{factura.nombre}</Text>
-  </View>
-);
+export default function Facturas({ navigation }: FacturasProps) {
+  const [factura, setFactura] = useState<FacturaExt[]>([]);
 
-export default function Facturas() {
-  const [facturasList, setFacturasList] = useState<FacturasList[]>([]);
+  const [date, setDate] = useState(new Date());
+  const [show, setShow] = useState(false);
+
+  const onChangeDate = (event, selectedDate) => {
+    const currentDate = selectedDate;
+
+    setShow(Platform.OS === "android");
+    setDate(currentDate);
+    console.log(currentDate);
+    setShow(false);
+  };
 
   useEffect(() => {
     const unsubscribe = async () => {
       const datos = await getFacturas();
-      setFacturasList(datos);
+      setFactura(datos);
     };
 
     unsubscribe();
-  }, [facturasList]);
+  }, [factura]);
+
+  const handleOnPress = (factura: FacturaExt) => {
+    navigation.navigate(Routes.FacturaDetails, {
+      collectionId: factura.collectionId,
+    });
+  };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Listado de Facturas</Text>
+
+      <Button title="DATEPICKER" onPress={() => setShow(true)} />
+      {show && (
+        <DateTimePicker
+          testID="Fecha"
+          value={date}
+          mode={"date"}
+          display="default"
+          onChange={onChangeDate}
+        />
+      )}
+
       <SafeAreaView style={styles.safeArea}>
         <FlatList
           style={styles.flatList}
-          data={facturasList}
+          data={factura}
           keyExtractor={(item) => item.collectionId}
           renderItem={({ item, index }) => {
-            return <FacturaItem factura={item} />;
+            return (
+              <FacturaItem
+                factura={item}
+                key={index}
+                onPress={() => handleOnPress(item)}
+              />
+            );
           }}
         />
       </SafeAreaView>
@@ -54,7 +89,8 @@ const styles = StyleSheet.create({
     padding: 10,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: StatusBar.currentHeight || 0,
+    marginTop: 0,
+    backgroundColor: "#fff",
   },
   title: {
     fontSize: 20,

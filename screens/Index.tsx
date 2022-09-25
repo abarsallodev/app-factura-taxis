@@ -5,7 +5,10 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../config/firebase";
 
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationOptions,
+} from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 
@@ -13,6 +16,9 @@ import { Routes } from "../types/navigation";
 
 import Login from "./Login";
 import Facturas from "./Facturas";
+import FacturaDetails from "./FacturaDetails";
+import FacturaEdit from "./FacturaEdit";
+import FacturaAdd from "./FacturaAdd";
 import Logout from "./Logout";
 
 const getIcon = (
@@ -25,7 +31,7 @@ const getIcon = (
     case Routes.Facturas:
       iconName = "file-invoice";
       break;
-    case Routes.Logout:
+    case Routes.LogoutTab:
       iconName = "sign-out-alt";
       break;
   }
@@ -33,9 +39,15 @@ const getIcon = (
   return <FontAwesome5 name={iconName} size={size} color={color} />;
 };
 
-const LoginStack = createNativeStackNavigator();
-const TabStack = createBottomTabNavigator();
+const navigationGenericOptions: NativeStackNavigationOptions = {
+  headerBackTitle: "Volver",
+  headerTitleStyle: {
+    fontSize: 20,
+  },
+};
 
+//Stack para el Inicio de Sesion
+const LoginStack = createNativeStackNavigator();
 function LoginScreen() {
   return (
     <LoginStack.Navigator screenOptions={{ headerShown: false }}>
@@ -44,6 +56,33 @@ function LoginScreen() {
   );
 }
 
+//Stack para Facturas
+const FacturasStack = createNativeStackNavigator();
+function FacturasNavigation() {
+  return (
+    <FacturasStack.Navigator>
+      <FacturasStack.Screen
+        name={Routes.Facturas}
+        component={Facturas}
+        options={{ ...navigationGenericOptions }}
+      />
+      <FacturasStack.Screen
+        name={Routes.FacturaDetails}
+        component={FacturaDetails}
+        options={{ ...navigationGenericOptions }}
+      />
+      <FacturasStack.Screen
+        name={Routes.FacturaEdit}
+        component={FacturaEdit}
+        options={{ ...navigationGenericOptions }}
+      />
+      <FacturasStack.Screen name={Routes.FacturaAdd} component={FacturaAdd} />
+    </FacturasStack.Navigator>
+  );
+}
+
+//Iconos de la parte inferior
+const TabStack = createBottomTabNavigator();
 function ContenScreen() {
   return (
     <TabStack.Navigator
@@ -53,8 +92,11 @@ function ContenScreen() {
         tabBarIcon: ({ color, size }) => getIcon(route, color, size),
       })}
     >
-      <TabStack.Screen name="Facturas" component={Facturas} />
-      <TabStack.Screen name="Logout" component={Logout} />
+      <TabStack.Screen
+        name={Routes.FacturasTab}
+        component={FacturasNavigation}
+      />
+      <TabStack.Screen name={Routes.LogoutTab} component={Logout} />
     </TabStack.Navigator>
   );
 }

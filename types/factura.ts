@@ -1,4 +1,4 @@
-export interface NewFactura {
+export interface FacturaBase {
     userId: string,
     receipt: number,
     cedula: string,
@@ -9,6 +9,6 @@ export interface NewFactura {
     numeroRegistro: string,
 }
 
-export interface FacturasList extends NewFactura {
+export interface FacturaExt extends FacturaBase {
     collectionId: string;
 }
