@@ -19,7 +19,7 @@ import Facturas from "./Facturas";
 import FacturaDetails from "./FacturaDetails";
 import FacturaEdit from "./FacturaEdit";
 import FacturaAdd from "./FacturaAdd";
-import Logout from "./Logout";
+import Settings from "./Settings";
 
 const getIcon = (
   route: RouteProp<ParamListBase, string>,
@@ -31,8 +31,8 @@ const getIcon = (
     case Routes.Facturas:
       iconName = "file-invoice";
       break;
-    case Routes.LogoutTab:
-      iconName = "sign-out-alt";
+    case Routes.SettingsTab:
+      iconName = "sliders-h";
       break;
   }
 
@@ -96,7 +96,7 @@ function ContenScreen() {
         name={Routes.FacturasTab}
         component={FacturasNavigation}
       />
-      <TabStack.Screen name={Routes.LogoutTab} component={Logout} />
+      <TabStack.Screen name={Routes.SettingsTab} component={Settings} />
     </TabStack.Navigator>
   );
 }

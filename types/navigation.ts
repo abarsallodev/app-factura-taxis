@@ -1,24 +1,24 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 export enum Routes {
-  Login = 'Login',
+  Login = "Login",
 
   //TABS
-  FacturasTab = 'Facturas',
-  LogoutTab = 'Salir',
+  FacturasTab = "Facturas",
+  SettingsTab = "Ajustes",
 
   //SCREENS
-  Facturas = 'Listado de Facturas',
-  FacturaDetails = 'Detalles de Factura',
-  FacturaEdit = 'Editar Factura',
-  FacturaAdd = 'Añadir Factura',
+  Facturas = "Listado de Facturas",
+  FacturaDetails = "Detalles de Factura",
+  FacturaEdit = "Editar Factura",
+  FacturaAdd = "Añadir Factura",
 }
 
 export type RootStackParamList = {
   [Routes.Login]: undefined;
 
   //TABS
-  [Routes.LogoutTab]: undefined;
+  [Routes.SettingsTab]: undefined;
   [Routes.FacturasTab]: undefined;
 
   //SCREENS
@@ -30,10 +30,25 @@ export type RootStackParamList = {
 
 export type RootStackParamListKeys = keyof RootStackParamList;
 
-export type LoginProps = NativeStackScreenProps<RootStackParamList, Routes.Login>;
+export type LoginProps = NativeStackScreenProps<
+  RootStackParamList,
+  Routes.Login
+>;
 
 //SCREENS
-export type FacturasProps = NativeStackScreenProps<RootStackParamList, Routes.Facturas>;
-export type FacturaDetailsProps = NativeStackScreenProps<RootStackParamList, Routes.FacturaDetails>;
-export type FacturaEditProps = NativeStackScreenProps<RootStackParamList, Routes.FacturaEdit>;
-export type FacturaAddProps = NativeStackScreenProps<RootStackParamList, Routes.FacturaAdd>;
+export type FacturasProps = NativeStackScreenProps<
+  RootStackParamList,
+  Routes.Facturas
+>;
+export type FacturaDetailsProps = NativeStackScreenProps<
+  RootStackParamList,
+  Routes.FacturaDetails
+>;
+export type FacturaEditProps = NativeStackScreenProps<
+  RootStackParamList,
+  Routes.FacturaEdit
+>;
+export type FacturaAddProps = NativeStackScreenProps<
+  RootStackParamList,
+  Routes.FacturaAdd
+>;

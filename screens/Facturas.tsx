@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   Button,
   FlatList,
@@ -22,20 +22,31 @@ export default function Facturas({ navigation }: FacturasProps) {
   const [factura, setFactura] = useState<FacturaExt[]>([]);
 
   const [date, setDate] = useState(new Date());
-  const [show, setShow] = useState(false);
+  const [dateText, setDateText] = useState<string>("");
+  const [showDate, setShowDate] = useState<boolean>(false);
 
   const onChangeDate = (event, selectedDate) => {
     const currentDate = selectedDate;
 
-    setShow(Platform.OS === "android");
+    const day =
+      currentDate.getDate() < 10
+        ? `0${currentDate.getDate()}`
+        : `${currentDate.getDate()}`;
+    const month =
+      currentDate.getMonth() + 1 < 10
+        ? `0${currentDate.getMonth() + 1}`
+        : `${currentDate.getMonth() + 1}`;
+    const year = currentDate.getFullYear();
+
+    setDateText(`${year.toString()}-${month.toString()}-${day.toString()}`);
+    console.log(dateText);
+    setShowDate(false);
     setDate(currentDate);
-    console.log(currentDate);
-    setShow(false);
   };
 
   useEffect(() => {
     const unsubscribe = async () => {
-      const datos = await getFacturas();
+      const datos = await getFacturas(dateText);
       setFactura(datos);
     };
 
@@ -51,17 +62,24 @@ export default function Facturas({ navigation }: FacturasProps) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Listado de Facturas</Text>
+      <View style={{ marginBottom: 5 }}>
+        <Button title="Filtra Por Fecha" onPress={() => setShowDate(true)} />
+        <Button title="Mostrar Todos" onPress={() => setDateText("")} />
+      </View>
 
-      <Button title="DATEPICKER" onPress={() => setShow(true)} />
-      {show && (
-        <DateTimePicker
-          testID="Fecha"
-          value={date}
-          mode={"date"}
-          display="default"
-          onChange={onChangeDate}
-        />
-      )}
+      {useMemo(() => {
+        return (
+          showDate && (
+            <DateTimePicker
+              testID="Fecha"
+              value={date}
+              mode={"date"}
+              display="default"
+              onChange={onChangeDate}
+            />
+          )
+        );
+      }, [showDate])}
 
       <SafeAreaView style={styles.safeArea}>
         <FlatList
@@ -87,8 +105,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
-    alignItems: "center",
-    justifyContent: "center",
+    // alignItems: "center",
+    // justifyContent: "center",
     marginTop: 0,
     backgroundColor: "#fff",
   },
