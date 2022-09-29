@@ -20,6 +20,9 @@ import FacturaDetails from "./FacturaDetails";
 import FacturaEdit from "./FacturaEdit";
 import FacturaAdd from "./FacturaAdd";
 import Settings from "./Settings";
+import UserAdd from "./RegisterUser";
+import Users from "./Users";
+import UserEdit from "./UserEdit";
 
 const getIcon = (
   route: RouteProp<ParamListBase, string>,
@@ -81,6 +84,19 @@ function FacturasNavigation() {
   );
 }
 
+//Stack para Settings
+const SettingStack = createNativeStackNavigator();
+function SettingsNavigation() {
+  return (
+    <SettingStack.Navigator>
+      <SettingStack.Screen name={Routes.Settings} component={Settings} />
+      <SettingStack.Screen name={Routes.UserAdd} component={UserAdd} />
+      <SettingStack.Screen name={Routes.Users} component={Users} />
+      <SettingStack.Screen name={Routes.UserEdit} component={UserEdit} />
+    </SettingStack.Navigator>
+  );
+}
+
 //Iconos de la parte inferior
 const TabStack = createBottomTabNavigator();
 function ContenScreen() {
@@ -96,7 +112,10 @@ function ContenScreen() {
         name={Routes.FacturasTab}
         component={FacturasNavigation}
       />
-      <TabStack.Screen name={Routes.SettingsTab} component={Settings} />
+      <TabStack.Screen
+        name={Routes.SettingsTab}
+        component={SettingsNavigation}
+      />
     </TabStack.Navigator>
   );
 }

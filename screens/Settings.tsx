@@ -3,8 +3,9 @@ import { StyleSheet, Text, View, Button, TouchableOpacity } from "react-native";
 import { auth } from "../config/firebase";
 import { signOut } from "firebase/auth";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { SettingsProps, Routes } from "../types/navigation";
 
-export default function Logout() {
+export default function Settings({ navigation }: SettingsProps) {
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -14,6 +15,18 @@ export default function Logout() {
   };
   return (
     <View style={styles.container}>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate(Routes.Users)}
+      >
+        <FontAwesome5
+          style={styles.buttonIcon}
+          name={"users"}
+          color={"#ffffff"}
+          size={16}
+        />
+        <Text style={styles.buttonTitle}>Usuarios</Text>
+      </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={handleLogout}>
         <FontAwesome5
           style={styles.buttonIcon}
