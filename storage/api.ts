@@ -16,7 +16,7 @@ import { db, auth } from "../config/firebase";
 import { FacturaExt } from "../types/factura";
 
 export const getFacturas = async (filtro: string) => {
-  let facturas: FacturaExt[];
+  let facturas: FacturaExt[] = [];
 
   let q;
   if (filtro === "") {
@@ -29,21 +29,26 @@ export const getFacturas = async (filtro: string) => {
     );
   }
 
-  const querySnapshot = await getDocs(q);
+  try {
+    const querySnapshot = await getDocs(q);
 
-  facturas = querySnapshot.docs.map(
-    (doc) =>
-      ({
-        collectionId: doc.id,
-        userId: auth.currentUser?.uid,
-        cedula: doc.data().cedula,
-        receipt: doc.data().receipt,
-        fecha: doc.data().fecha,
-        nombre: doc.data().nombre,
-        numeroPlaca: doc.data().num_placa,
-        numeroRegistro: doc.data().num_registro,
-        monto: doc.data().monto,
-      } as FacturaExt)
-  );
+    facturas = querySnapshot.docs.map(
+      (doc) =>
+        ({
+          collectionId: doc.id,
+          userId: auth.currentUser?.uid,
+          cedula: doc.data().cedula,
+          receipt: doc.data().receipt,
+          fecha: doc.data().fecha,
+          nombre: doc.data().nombre,
+          numeroPlaca: doc.data().num_placa,
+          numeroRegistro: doc.data().num_registro,
+          monto: doc.data().monto,
+        } as FacturaExt)
+    );
+  } catch (error) {
+    console.log(error);
+  }
+
   return facturas;
 };

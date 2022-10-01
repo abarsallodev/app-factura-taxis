@@ -47,11 +47,20 @@ export default function Facturas({ navigation }: FacturasProps) {
   useEffect(() => {
     const unsubscribe = async () => {
       const datos = await getFacturas(dateText);
+      console.log(datos);
       setFactura(datos);
     };
 
-    unsubscribe();
-  }, [factura]);
+    try {
+      unsubscribe();
+    } catch (error) {
+      console.log(error);
+    }
+
+    // return () => {
+    //   unsubscribe;
+    // };
+  }, [setFactura, dateText]);
 
   const handleOnPress = (factura: FacturaExt) => {
     navigation.navigate(Routes.FacturaDetails, {
