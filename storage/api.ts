@@ -60,10 +60,9 @@ export const getFacturas = async (filtro: string) => {
 };
 
 //Users API
-export const AddUser = async (newUser: UserModel) => {
+export const AddUser = async (newUser: UserModel): Promise<Result> => {
   let result: Result = { type: false, message: '' }
   try {
-    console.log(newUser)
     const { user } = await createUserWithEmailAndPassword(
       auth,
       newUser.email,
@@ -78,11 +77,11 @@ export const AddUser = async (newUser: UserModel) => {
       enabled: newUser.enabled,
     });
 
-    result = { type: true, message: 'Usuario creado exitosamente.' }
+    return result = { type: true, message: 'Usuario creado exitosamente.' }
   } catch (error) {
     const errorMessage = `${error.message}`;
     console.log(error)
-    result = { type: false, message: errorMessage }
+    return result = { type: false, message: errorMessage }
   }
 }
 

@@ -23,7 +23,7 @@ export default function Users({ navigation }: UsersProps) {
     };
 
     unsubscribe();
-  }, [setUsers]);
+  }, [users, setUsers]);
 
   return (
     <View style={styles.container}>
