@@ -5,7 +5,7 @@ export enum Routes {
 
   // TABS
   FacturasTab = "Facturas",
-  SettingsTab = "Ajustes",
+  SettingsTab = "Ajustes Tab",
 
   // SCREENS
   // FACTURAS

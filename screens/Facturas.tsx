@@ -10,7 +10,9 @@ import {
   View,
 } from "react-native";
 
-import DateTimePicker from "@react-native-community/datetimepicker";
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from "@react-native-community/datetimepicker";
 
 import { FacturaExt } from "../types/factura";
 import { getFacturas } from "../storage/api";
@@ -25,29 +27,31 @@ export default function Facturas({ navigation }: FacturasProps) {
   const [dateText, setDateText] = useState<string>("");
   const [showDate, setShowDate] = useState<boolean>(false);
 
-  const onChangeDate = (event, selectedDate) => {
+  const onChangeDate = (
+    event: DateTimePickerEvent,
+    selectedDate: Date | undefined
+  ) => {
     const currentDate = selectedDate;
 
-    const day =
-      currentDate.getDate() < 10
-        ? `0${currentDate.getDate()}`
-        : `${currentDate.getDate()}`;
-    const month =
-      currentDate.getMonth() + 1 < 10
-        ? `0${currentDate.getMonth() + 1}`
-        : `${currentDate.getMonth() + 1}`;
-    const year = currentDate.getFullYear();
-
-    setDateText(`${year.toString()}-${month.toString()}-${day.toString()}`);
-    console.log(dateText);
+    if (currentDate != undefined) {
+      const day =
+        currentDate.getDate() < 10
+          ? `0${currentDate.getDate()}`
+          : `${currentDate.getDate()}`;
+      const month =
+        currentDate.getMonth() + 1 < 10
+          ? `0${currentDate.getMonth() + 1}`
+          : `${currentDate.getMonth() + 1}`;
+      const year = currentDate.getFullYear();
+      setDateText(`${year.toString()}-${month.toString()}-${day.toString()}`);
+      setDate(currentDate);
+    }
     setShowDate(false);
-    setDate(currentDate);
   };
 
   useEffect(() => {
     const unsubscribe = async () => {
       const datos = await getFacturas(dateText);
-      console.log(datos);
       setFactura(datos);
     };
 

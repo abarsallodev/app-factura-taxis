@@ -8,9 +8,9 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-import { auth } from "../config/firebase";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { UserAddProps, Routes } from "../types/navigation";
+import { UserModel } from "../types/user";
+import { AddUser } from "../storage/api";
 
 export default function RegisterUser({ navigation }: UserAddProps) {
   const [email, setEmail] = useState<string>("");
@@ -19,19 +19,16 @@ export default function RegisterUser({ navigation }: UserAddProps) {
 
   const handleRegister = async () => {
     try {
-      const { user } = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-
-      await updateProfile(user, {
-        displayName: name,
-      }).catch((error) => {
-        console.error({ error });
+      const result = await AddUser({
+        userId: undefined,
+        email: email,
+        name: name,
+        password: password,
+        rol: "admin",
+        enabled: true,
       });
-
-      navigation.navigate(Routes.Settings);
+      console.log(result);
+      navigation.navigate(Routes.Users);
     } catch (ex) {
       console.error({ ex });
     }

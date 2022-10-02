@@ -1,9 +1,8 @@
-export interface User {
+export interface UserModel {
+  userId: string | undefined;
   email: string;
-  name: number | undefined;
-  password: number;
-}
-
-export interface UserExt extends User {
-  userId: string;
+  name: string;
+  password: string;
+  rol: string;
+  enabled: boolean;
 }
