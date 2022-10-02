@@ -3,7 +3,7 @@ import { UserModel } from "../types/user";
 import React, { useEffect, useState } from "react";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { GetUsers } from "../storage/api";
-
+import UserItem from "../components/UserItem";
 import {
   View,
   StyleSheet,
@@ -28,24 +28,17 @@ export default function Users({ navigation }: UsersProps) {
   return (
     <View style={styles.container}>
       <TouchableOpacity
-        style={styles.button}
+        style={styles.floatinButton}
         onPress={() => navigation.navigate(Routes.UserAdd)}
       >
-        <FontAwesome5
-          style={styles.buttonIcon}
-          name={"user-plus"}
-          color={"#ffffff"}
-          size={16}
-        />
-        <Text style={styles.buttonTitle}>Añadir Usuario</Text>
+        <FontAwesome5 name={"user-plus"} color={"#ffffff"} size={16} />
       </TouchableOpacity>
       <SafeAreaView style={styles.safeArea}>
         <FlatList
           style={styles.flatList}
           data={users}
-          // keyExtractor={(item) => item.userId}
           renderItem={({ item, index }) => {
-            return <Text key={index}>{item.name}</Text>;
+            return <UserItem key={index} user={item} onPress={() => {}} />;
           }}
         />
       </SafeAreaView>
@@ -72,9 +65,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flexDirection: "row",
   },
-  buttonIcon: {
-    marginRight: 5,
-  },
   buttonTitle: {
     color: "white",
     fontSize: 16,
@@ -85,6 +75,18 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   flatList: {
-    width: "100%",
+    flex: 1,
+  },
+  floatinButton: {
+    position: "absolute",
+    width: 60,
+    height: 60,
+    alignItems: "center",
+    justifyContent: "center",
+    right: 20,
+    bottom: 30,
+    backgroundColor: "#0984e3",
+    borderRadius: 50,
+    zIndex: 4,
   },
 });

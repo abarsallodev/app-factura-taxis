@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Platform,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { FacturaExt } from "../types/factura";
 
 interface Props {
@@ -47,7 +41,7 @@ export default function FacturaItem(props: Props): JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: "column",
+    flexDirection: "row",
     // alignItems: "center",
     // justifyContent: "center",
     backgroundColor: "#eceff1",
