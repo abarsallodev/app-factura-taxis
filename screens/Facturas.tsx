@@ -4,11 +4,12 @@ import {
   FlatList,
   Platform,
   SafeAreaView,
-  StatusBar,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
+import { FontAwesome5 } from "@expo/vector-icons";
 
 import DateTimePicker, {
   DateTimePickerEvent,
@@ -74,6 +75,12 @@ export default function Facturas({ navigation }: FacturasProps) {
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity
+        style={styles.floatinButton}
+        onPress={() => navigation.navigate(Routes.FacturaAdd)}
+      >
+        <FontAwesome5 name={"plus"} color={"#ffffff"} size={16} />
+      </TouchableOpacity>
       <Text style={styles.title}>Listado de Facturas</Text>
       <View style={{ marginBottom: 5 }}>
         <Button title="Filtra Por Fecha" onPress={() => setShowDate(true)} />
@@ -135,5 +142,17 @@ const styles = StyleSheet.create({
   },
   flatList: {
     width: "100%",
+  },
+  floatinButton: {
+    position: "absolute",
+    width: 60,
+    height: 60,
+    alignItems: "center",
+    justifyContent: "center",
+    right: 20,
+    bottom: 30,
+    backgroundColor: "#0984e3",
+    borderRadius: 50,
+    zIndex: 4,
   },
 });
