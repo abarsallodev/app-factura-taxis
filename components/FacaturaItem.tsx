@@ -8,7 +8,8 @@ interface Props {
 }
 
 export default function FacturaItem(props: Props): JSX.Element {
-  const { receipt, monto, numeroPlaca, nombre, fecha } = props.factura;
+  const { receipt, monto, numeroPlaca, numeroRegistro, nombre, fecha, cedula } =
+    props.factura;
   const onPress = props.onPress;
   return (
     <View style={styles.container}>
@@ -16,22 +17,41 @@ export default function FacturaItem(props: Props): JSX.Element {
         onPress={() => onPress(props.factura)}
         activeOpacity={0}
       >
-        <View style={styles.item}>
-          <Text>
-            <Text style={styles.title}>Fatura #:</Text> {receipt}
-          </Text>
-          <Text>
-            <Text style={styles.title}>Nombre #:</Text> {nombre}
-          </Text>
-          <Text>
-            <Text style={styles.title}>Placa #:</Text> {numeroPlaca}
-          </Text>
-          <Text>
-            <Text style={styles.title}>Monto:</Text> {monto}
-          </Text>
-          <Text>
-            <Text style={styles.title}>Fecha:</Text> {fecha}
-          </Text>
+        <View>
+          <View style={styles.rowContainer}>
+            <Text style={{ fontSize: 18, ...styles.title }}>Fatura #:</Text>
+            <Text style={{ fontSize: 18, ...styles.title }}>{receipt}</Text>
+          </View>
+          <View style={styles.rowContainer}>
+            <View style={styles.rowContainer}>
+              <Text style={styles.title}>Nombre:</Text>
+              <Text style={styles.value}>{nombre}</Text>
+            </View>
+            <View style={styles.rowContainer}>
+              <Text style={styles.title}>Cedula:</Text>
+              <Text style={styles.value}>{cedula}</Text>
+            </View>
+          </View>
+          <View style={styles.rowContainer}>
+            <View style={styles.rowContainer}>
+              <Text style={styles.title}>Número Placa:</Text>
+              <Text style={styles.value}>{numeroPlaca}</Text>
+            </View>
+            <View style={styles.rowContainer}>
+              <Text style={styles.title}>Número Registro:</Text>
+              <Text style={styles.value}>{numeroRegistro}</Text>
+            </View>
+          </View>
+          <View style={styles.rowContainer}>
+            <View style={styles.rowContainer}>
+              <Text style={styles.title}>Monto:</Text>
+              <Text style={styles.value}>{monto}</Text>
+            </View>
+            <View style={styles.rowContainer}>
+              <Text style={styles.title}>Fecha:</Text>
+              <Text style={styles.value}>{fecha}</Text>
+            </View>
+          </View>
         </View>
       </TouchableOpacity>
     </View>
@@ -41,20 +61,20 @@ export default function FacturaItem(props: Props): JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: "row",
-    // alignItems: "center",
-    // justifyContent: "center",
     backgroundColor: "#eceff1",
     borderBottomWidth: 1,
     borderColor: "#babdbe",
     borderRadius: 2,
     padding: 15,
   },
+  rowContainer: {
+    flexDirection: "row",
+    flex: 1,
+  },
   title: {
     fontWeight: "bold",
   },
-  item: {
-    // width: "100%",
-    // flex: 1,
+  value: {
+    marginLeft: 5,
   },
 });
