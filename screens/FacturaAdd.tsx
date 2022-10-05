@@ -1,13 +1,72 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, TextInput } from "react-native";
+import React, { useEffect, useMemo, useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  Button,
+  Alert,
+} from "react-native";
+import DatePicker, {
+  DateTimePickerEvent,
+} from "@react-native-community/datetimepicker";
+import { async } from "@firebase/util";
 
 export default function FacturaDetails() {
   const [nombre, setNombre] = useState<string>("");
   const [cedula, setCedula] = useState<string>("");
   const [placa, setPlaca] = useState<string>("");
   const [registro, setRegistro] = useState<string>("");
-  const [monto, setMonto] = useState<string>("");
+  const [monto, setMonto] = useState<number>(0);
   const [fecha, setFecha] = useState<string>("");
+  const [date, setDate] = useState(new Date());
+  const [showDate, setShowDate] = useState<boolean>(false);
+
+  const FormatDate = (current: Date) => {
+    const day =
+      current.getDate() < 10 ? `0${current.getDate()}` : `${current.getDate()}`;
+
+    const month =
+      current.getMonth() + 1 < 10
+        ? `0${current.getMonth() + 1}`
+        : `${current.getMonth() + 1}`;
+
+    const year = current.getFullYear();
+    return `${year.toString()}-${month.toString()}-${day.toString()}`;
+  };
+
+  useEffect(() => {
+    const current = new Date();
+    setFecha(FormatDate(current));
+  }, []);
+
+  const onChangeDate = (
+    event: DateTimePickerEvent,
+    selectedDate: Date | undefined
+  ) => {
+    const currentDate = selectedDate;
+
+    if (currentDate != undefined) {
+      setFecha(FormatDate(currentDate));
+      setDate(currentDate);
+    }
+    setShowDate(false);
+  };
+
+  const handleSubmit = async () => {
+    if (
+      nombre === "" ||
+      cedula === "" ||
+      placa === "" ||
+      registro === "" ||
+      monto === 0
+    ) {
+      Alert.alert("Mensaje!", "Debe llenar todos los campos.", [
+        { text: "Cerrar" },
+      ]);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -55,7 +114,6 @@ export default function FacturaDetails() {
             />
           </View>
         </View>
-
         <View style={{ flexDirection: "row", width: 350, marginBottom: 10 }}>
           <View style={styles.leftContainer}>
             <Text style={styles.label}>Monto</Text>
@@ -68,16 +126,33 @@ export default function FacturaDetails() {
               autoCapitalize="none"
             />
           </View>
+
+          {useMemo(() => {
+            return (
+              showDate && (
+                <DatePicker
+                  testID="Fecha"
+                  value={date}
+                  mode={"date"}
+                  display="default"
+                  onChange={onChangeDate}
+                />
+              )
+            );
+          }, [showDate])}
+
           <View style={styles.rightContainer}>
             <Text style={styles.label}>Fecha</Text>
-            <TextInput
-              style={{ ...styles.input }}
-              onChangeText={(text) => setFecha(text)}
-              value={fecha}
-              underlineColorAndroid="transparent"
-              autoCapitalize="none"
-            />
+            <TouchableOpacity
+              onPress={() => setShowDate(true)}
+              activeOpacity={0}
+            >
+              <Text style={{ ...styles.input }}>{fecha}</Text>
+            </TouchableOpacity>
           </View>
+        </View>
+        <View>
+          <Button title="Guardar Factura" onPress={() => handleSubmit()} />
         </View>
       </View>
     </View>

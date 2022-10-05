@@ -18,7 +18,13 @@ export default function FacturaItem(props: Props): JSX.Element {
         activeOpacity={0}
       >
         <View>
-          <View style={styles.rowContainer}>
+          <View
+            style={{
+              borderBottomWidth: 1,
+              borderBottomColor: "#607d8b",
+              ...styles.rowContainer,
+            }}
+          >
             <Text style={{ fontSize: 18, ...styles.title }}>Fatura #:</Text>
             <Text style={{ fontSize: 18, ...styles.title }}>{receipt}</Text>
           </View>
@@ -66,6 +72,7 @@ const styles = StyleSheet.create({
     borderColor: "#babdbe",
     borderRadius: 2,
     padding: 15,
+    marginBottom: 2,
   },
   rowContainer: {
     flexDirection: "row",
