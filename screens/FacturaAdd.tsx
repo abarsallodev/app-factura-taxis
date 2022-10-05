@@ -11,14 +11,15 @@ import {
 import DatePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
-import { async } from "@firebase/util";
+import { saveFactura } from "../storage/api";
+import { FacturaAddProps, Routes } from "../types/navigation";
 
-export default function FacturaDetails() {
+export default function FacturaAdd({ navigation }: FacturaAddProps) {
   const [nombre, setNombre] = useState<string>("");
   const [cedula, setCedula] = useState<string>("");
   const [placa, setPlaca] = useState<string>("");
   const [registro, setRegistro] = useState<string>("");
-  const [monto, setMonto] = useState<number>(0);
+  const [monto, setMonto] = useState<string>("0");
   const [fecha, setFecha] = useState<string>("");
   const [date, setDate] = useState(new Date());
   const [showDate, setShowDate] = useState<boolean>(false);
@@ -60,10 +61,28 @@ export default function FacturaDetails() {
       cedula === "" ||
       placa === "" ||
       registro === "" ||
-      monto === 0
+      monto === "0"
     ) {
       Alert.alert("Mensaje!", "Debe llenar todos los campos.", [
         { text: "Cerrar" },
+      ]);
+    } else {
+      const result = await saveFactura({
+        userId: "",
+        receipt: 7,
+        cedula: cedula,
+        fecha: fecha,
+        nombre: nombre,
+        monto: parseFloat(monto),
+        numeroPlaca: placa,
+        numeroRegistro: registro,
+      });
+
+      Alert.alert(result.type ? "Mensaje!" : "Error!", result.message, [
+        {
+          text: "Cerrar",
+          onPress: () => navigation.navigate(Routes.Facturas),
+        },
       ]);
     }
   };
@@ -97,7 +116,7 @@ export default function FacturaDetails() {
             <Text style={styles.label}>Número de Placa</Text>
             <TextInput
               style={{ ...styles.input }}
-              onChangeText={(text) => setPlaca(text)}
+              onChangeText={(text) => setPlaca(text.toUpperCase())}
               value={placa}
               underlineColorAndroid="transparent"
               autoCapitalize="none"
@@ -107,7 +126,7 @@ export default function FacturaDetails() {
             <Text style={styles.label}>Número de Registro</Text>
             <TextInput
               style={{ ...styles.input }}
-              onChangeText={(text) => setRegistro(text)}
+              onChangeText={(text) => setRegistro(text.toUpperCase())}
               value={registro}
               underlineColorAndroid="transparent"
               autoCapitalize="none"

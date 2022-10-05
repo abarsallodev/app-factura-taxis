@@ -23,7 +23,7 @@ import FacturaItem from "../components/FacaturaItem";
 import { FacturasProps, Routes } from "../types/navigation";
 
 export default function Facturas({ navigation }: FacturasProps) {
-  const [factura, setFactura] = useState<FacturaExt[]>([]);
+  const [facturas, setFacturas] = useState<FacturaExt[]>([]);
 
   const [date, setDate] = useState(new Date());
   const [dateText, setDateText] = useState<string>("");
@@ -54,7 +54,7 @@ export default function Facturas({ navigation }: FacturasProps) {
   useEffect(() => {
     const unsubscribe = async () => {
       const datos = await getFacturas(dateText);
-      setFactura(datos);
+      setFacturas(datos);
     };
 
     try {
@@ -66,7 +66,7 @@ export default function Facturas({ navigation }: FacturasProps) {
     // return () => {
     //   unsubscribe;
     // };
-  }, [setFactura, dateText]);
+  }, [setFacturas, facturas, dateText]);
 
   const handleOnPress = (factura: FacturaExt) => {
     navigation.navigate(Routes.FacturaDetails, {
@@ -105,7 +105,7 @@ export default function Facturas({ navigation }: FacturasProps) {
       <SafeAreaView style={styles.safeArea}>
         <FlatList
           style={styles.flatList}
-          data={factura}
+          data={facturas}
           keyExtractor={(item) => item.collectionId}
           renderItem={({ item, index }) => {
             return (

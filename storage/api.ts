@@ -15,9 +15,9 @@ import {
 import { useState } from "react";
 
 import { db, auth } from "../config/firebase";
-import { FacturaExt } from "../types/factura";
+import { FacturaBase, FacturaExt } from "../types/factura";
 import { UserModel } from "../types/user";
-import { Result } from "../types/utils";
+import { Result, ResultExtend } from "../types/utils";
 
 
 // Facturas API
@@ -59,6 +59,29 @@ export const getFacturas = async (filtro: string) => {
   return facturas;
 };
 
+export const saveFactura = async (factura: FacturaBase): Promise<ResultExtend> => {
+  let result: ResultExtend = { type: false, message: '', collectionId: '' };
+
+  try {
+    const docRef = await addDoc(collection(db, "facturas"), {
+      userId: auth.currentUser?.uid,
+      cedula: factura.cedula,
+      receipt: factura.receipt,
+      fecha: factura.fecha,
+      nombre: factura.nombre,
+      num_placa: factura.numeroPlaca,
+      num_registro: factura.numeroRegistro,
+      monto: factura.monto,
+    });
+    result = { type: true, message: 'Factura guardad exitosamente.', collectionId: docRef.id };
+  }
+  catch (error: any) {
+    result = { type: false, message: error.message, collectionId: '' };
+  }
+
+  return result;
+}
+
 //Users API
 export const AddUser = async (newUser: UserModel): Promise<Result> => {
   let result: Result = { type: false, message: '' }
@@ -69,7 +92,7 @@ export const AddUser = async (newUser: UserModel): Promise<Result> => {
       newUser.password
     );
 
-    const docRef = await addDoc(collection(db, "users"), {
+    await addDoc(collection(db, "users"), {
       userId: user.uid,
       email: newUser.email,
       name: newUser.name,
@@ -78,7 +101,7 @@ export const AddUser = async (newUser: UserModel): Promise<Result> => {
     });
 
     return result = { type: true, message: 'Usuario creado exitosamente.' }
-  } catch (error) {
+  } catch (error: any) {
     const errorMessage = `${error.message}`;
     console.log(error)
     return result = { type: false, message: errorMessage }
