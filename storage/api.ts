@@ -12,6 +12,7 @@ import {
   where,
   orderBy,
   limit,
+  increment,
 } from "firebase/firestore";
 import { useState } from "react";
 
@@ -20,25 +21,43 @@ import { FacturaBase, FacturaExt } from "../types/factura";
 import { UserModel } from "../types/user";
 import { Result, ResultExtend } from "../types/utils";
 
-
 // Facturas API
+export const updateSecuencia = async () => {
+  let count = 0;
+  try {
+    const docRef = doc(db, "secuencia", "yxSPbk64CQDE8icNBqyJ");
+    const actual = await getDoc(docRef);
+
+    if (actual.exists()) {
+      count = actual.data().factura_secuencia + 1;
+      const result = await setDoc(docRef, {
+        factura_secuencia: count,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+
+  return count;
+};
+
 export const getFactura = async (id: string): Promise<FacturaBase> => {
   let factura: FacturaBase = {
-    cedula: '',
-    userId: '',
+    cedula: "",
+    userId: "",
     receipt: 0,
-    fecha: '',
-    nombre: '',
+    fecha: "",
+    nombre: "",
     monto: 0,
-    numeroPlaca: '',
-    numeroRegistro: '',
-  }
+    numeroPlaca: "",
+    numeroRegistro: "",
+  };
   try {
     const docRef = doc(db, "facturas", id);
     const querySnapshot = await getDoc(docRef);
 
     if (querySnapshot.exists()) {
-      const data = querySnapshot.data()
+      const data = querySnapshot.data();
       factura = {
         cedula: data.cedula,
         userId: data.userId,
@@ -48,14 +67,12 @@ export const getFactura = async (id: string): Promise<FacturaBase> => {
         monto: data.monto,
         numeroPlaca: data.num_placa,
         numeroRegistro: data.num_registro,
-      }
+      };
     }
-  }
-  catch (error: any) {
-  }
+  } catch (error: any) {}
 
-  return factura
-}
+  return factura;
+};
 
 export const getFacturas = async (filtro: string) => {
   let facturas: FacturaExt[] = [];
@@ -76,17 +93,17 @@ export const getFacturas = async (filtro: string) => {
 
     facturas = querySnapshot.docs.map(
       (doc) =>
-      ({
-        collectionId: doc.id,
-        userId: auth.currentUser?.uid,
-        cedula: doc.data().cedula,
-        receipt: doc.data().receipt,
-        fecha: doc.data().fecha,
-        nombre: doc.data().nombre,
-        numeroPlaca: doc.data().num_placa,
-        numeroRegistro: doc.data().num_registro,
-        monto: doc.data().monto,
-      } as FacturaExt)
+        ({
+          collectionId: doc.id,
+          userId: auth.currentUser?.uid,
+          cedula: doc.data().cedula,
+          receipt: doc.data().receipt,
+          fecha: doc.data().fecha,
+          nombre: doc.data().nombre,
+          numeroPlaca: doc.data().num_placa,
+          numeroRegistro: doc.data().num_registro,
+          monto: doc.data().monto,
+        } as FacturaExt)
     );
   } catch (error) {
     console.log(error);
@@ -95,40 +112,39 @@ export const getFacturas = async (filtro: string) => {
   return facturas;
 };
 
-export const saveFactura = async (factura: FacturaBase): Promise<ResultExtend> => {
-  let result: ResultExtend = { type: false, message: '', collectionId: '' };
+export const saveFactura = async (
+  factura: FacturaBase
+): Promise<ResultExtend> => {
+  let result: ResultExtend = { type: false, message: "", collectionId: "" };
 
   try {
-
-    // const q = query(collection(db, "facturas"), orderBy("receipt", "desc"), limit(1));
-    // const querySnapshot = await getDocs(q);
-    // // const lastId = querySnapshot.docs.map((doc) => {
-    // //   doc.data().id
-    // // });
-    // console.log(querySnapshot)
+    const facturaNumber = await updateSecuencia();
 
     const docRef = await addDoc(collection(db, "facturas"), {
       userId: auth.currentUser?.uid,
       cedula: factura.cedula,
-      receipt: factura.receipt,
+      receipt: facturaNumber,
       fecha: factura.fecha,
       nombre: factura.nombre,
       num_placa: factura.numeroPlaca,
       num_registro: factura.numeroRegistro,
       monto: factura.monto,
     });
-    result = { type: true, message: 'Factura guardad exitosamente.', collectionId: docRef.id };
-  }
-  catch (error: any) {
-    result = { type: false, message: error.message, collectionId: '' };
+    result = {
+      type: true,
+      message: "Factura guardad exitosamente.",
+      collectionId: docRef.id,
+    };
+  } catch (error: any) {
+    result = { type: false, message: error.message, collectionId: "" };
   }
 
   return result;
-}
+};
 
 //Users API
 export const AddUser = async (newUser: UserModel): Promise<Result> => {
-  let result: Result = { type: false, message: '' }
+  let result: Result = { type: false, message: "" };
   try {
     const { user } = await createUserWithEmailAndPassword(
       auth,
@@ -144,13 +160,13 @@ export const AddUser = async (newUser: UserModel): Promise<Result> => {
       enabled: newUser.enabled,
     });
 
-    return result = { type: true, message: 'Usuario creado exitosamente.' }
+    return (result = { type: true, message: "Usuario creado exitosamente." });
   } catch (error: any) {
     const errorMessage = `${error.message}`;
-    console.log(error)
-    return result = { type: false, message: errorMessage }
+    console.log(error);
+    return (result = { type: false, message: errorMessage });
   }
-}
+};
 
 export const GetUsers = async () => {
   let users: UserModel[] = [];
@@ -160,16 +176,14 @@ export const GetUsers = async () => {
     const querySnapshot = await getDocs(q);
     users = querySnapshot.docs.map(
       (doc) =>
-      (
-        {
+        ({
           userId: doc.data().userId,
           email: doc.data().email,
           name: doc.data().name,
-          password: '',
+          password: "",
           rol: doc.data().rol,
           enabled: doc.data().enabled,
-        } as UserModel
-      )
+        } as UserModel)
     );
   } catch (error) {
     console.log(error);

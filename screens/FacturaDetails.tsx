@@ -1,14 +1,28 @@
 import { FacturaBase, FacturaExt } from "../types/factura";
-import { FacturaDetailsProps } from "../types/navigation";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { useEffect, useState } from "react";
+import { FacturaDetailsProps, Routes } from "../types/navigation";
+import { View, Text, StyleSheet, TouchableOpacity, Button } from "react-native";
+import React, { useEffect, useState } from "react";
 import { getFactura } from "../storage/api";
+import { HeaderBackButton } from "@react-navigation/elements";
 
 export default function FacturaDetails(
   facturaDetail: FacturaDetailsProps
 ): JSX.Element {
   const collectionId = facturaDetail.route.params.collectionId;
   const [factura, setFactura] = useState<FacturaBase>();
+  const { navigation } = facturaDetail;
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => {
+        return (
+          <HeaderBackButton
+            onPress={() => navigation.navigate(Routes.Facturas)}
+          />
+        );
+      },
+    });
+  }, [navigation]);
 
   useEffect(() => {
     const unsubscribe = async () => {

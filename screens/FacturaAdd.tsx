@@ -69,7 +69,7 @@ export default function FacturaAdd({ navigation }: FacturaAddProps) {
     } else {
       const result = await saveFactura({
         userId: "",
-        receipt: 9,
+        receipt: 0,
         cedula: cedula,
         fecha: fecha,
         nombre: nombre,
