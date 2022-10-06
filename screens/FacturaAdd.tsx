@@ -69,7 +69,7 @@ export default function FacturaAdd({ navigation }: FacturaAddProps) {
     } else {
       const result = await saveFactura({
         userId: "",
-        receipt: 7,
+        receipt: 9,
         cedula: cedula,
         fecha: fecha,
         nombre: nombre,
@@ -81,7 +81,10 @@ export default function FacturaAdd({ navigation }: FacturaAddProps) {
       Alert.alert(result.type ? "Mensaje!" : "Error!", result.message, [
         {
           text: "Cerrar",
-          onPress: () => navigation.navigate(Routes.Facturas),
+          onPress: () =>
+            navigation.navigate(Routes.FacturaDetails, {
+              collectionId: result.collectionId,
+            }),
         },
       ]);
     }
@@ -105,7 +108,7 @@ export default function FacturaAdd({ navigation }: FacturaAddProps) {
           <Text style={styles.label}>Cedula</Text>
           <TextInput
             style={{ width: 350, ...styles.input }}
-            onChangeText={(text) => setCedula(text)}
+            onChangeText={(text) => setCedula(text.toUpperCase())}
             value={cedula}
             underlineColorAndroid="transparent"
             autoCapitalize="none"

@@ -11,6 +11,7 @@ import {
   setDoc,
   where,
   orderBy,
+  limit,
 } from "firebase/firestore";
 import { useState } from "react";
 
@@ -21,6 +22,41 @@ import { Result, ResultExtend } from "../types/utils";
 
 
 // Facturas API
+export const getFactura = async (id: string): Promise<FacturaBase> => {
+  let factura: FacturaBase = {
+    cedula: '',
+    userId: '',
+    receipt: 0,
+    fecha: '',
+    nombre: '',
+    monto: 0,
+    numeroPlaca: '',
+    numeroRegistro: '',
+  }
+  try {
+    const docRef = doc(db, "facturas", id);
+    const querySnapshot = await getDoc(docRef);
+
+    if (querySnapshot.exists()) {
+      const data = querySnapshot.data()
+      factura = {
+        cedula: data.cedula,
+        userId: data.userId,
+        receipt: data.receipt,
+        fecha: data.fecha,
+        nombre: data.nombre,
+        monto: data.monto,
+        numeroPlaca: data.num_placa,
+        numeroRegistro: data.num_registro,
+      }
+    }
+  }
+  catch (error: any) {
+  }
+
+  return factura
+}
+
 export const getFacturas = async (filtro: string) => {
   let facturas: FacturaExt[] = [];
 
@@ -63,6 +99,14 @@ export const saveFactura = async (factura: FacturaBase): Promise<ResultExtend> =
   let result: ResultExtend = { type: false, message: '', collectionId: '' };
 
   try {
+
+    // const q = query(collection(db, "facturas"), orderBy("receipt", "desc"), limit(1));
+    // const querySnapshot = await getDocs(q);
+    // // const lastId = querySnapshot.docs.map((doc) => {
+    // //   doc.data().id
+    // // });
+    // console.log(querySnapshot)
+
     const docRef = await addDoc(collection(db, "facturas"), {
       userId: auth.currentUser?.uid,
       cedula: factura.cedula,
