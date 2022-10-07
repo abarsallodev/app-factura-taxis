@@ -22,12 +22,15 @@ import { getFacturas } from "../storage/api";
 import FacturaItem from "../components/FacaturaItem";
 import { FacturasProps, Routes } from "../types/navigation";
 
+import Loader from "../components/Loader";
+import { FormatDate } from "../utils/functions";
+
 export default function Facturas({ navigation }: FacturasProps) {
   const [facturas, setFacturas] = useState<FacturaExt[]>([]);
-
   const [date, setDate] = useState(new Date());
   const [dateText, setDateText] = useState<string>("");
   const [showDate, setShowDate] = useState<boolean>(false);
+  const [showLoader, setShowLoader] = useState<boolean>(false);
 
   const onChangeDate = (
     event: DateTimePickerEvent,
@@ -36,16 +39,7 @@ export default function Facturas({ navigation }: FacturasProps) {
     const currentDate = selectedDate;
 
     if (currentDate != undefined) {
-      const day =
-        currentDate.getDate() < 10
-          ? `0${currentDate.getDate()}`
-          : `${currentDate.getDate()}`;
-      const month =
-        currentDate.getMonth() + 1 < 10
-          ? `0${currentDate.getMonth() + 1}`
-          : `${currentDate.getMonth() + 1}`;
-      const year = currentDate.getFullYear();
-      setDateText(`${year.toString()}-${month.toString()}-${day.toString()}`);
+      setDateText(FormatDate(currentDate));
       setDate(currentDate);
     }
     setShowDate(false);
@@ -76,6 +70,8 @@ export default function Facturas({ navigation }: FacturasProps) {
 
   return (
     <View style={styles.container}>
+      {showLoader && <Loader message="" />}
+
       <TouchableOpacity
         style={styles.floatinButton}
         onPress={() => navigation.navigate(Routes.FacturaAdd)}
@@ -126,8 +122,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
-    // alignItems: "center",
-    // justifyContent: "center",
     marginTop: 0,
     backgroundColor: "#fff",
   },

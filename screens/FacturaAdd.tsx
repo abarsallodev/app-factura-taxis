@@ -14,6 +14,8 @@ import DatePicker, {
 import { saveFactura } from "../storage/api";
 import { FacturaAddProps, Routes } from "../types/navigation";
 
+import { FormatDate } from "../utils/functions";
+
 export default function FacturaAdd({ navigation }: FacturaAddProps) {
   const [nombre, setNombre] = useState<string>("");
   const [cedula, setCedula] = useState<string>("");
@@ -23,19 +25,6 @@ export default function FacturaAdd({ navigation }: FacturaAddProps) {
   const [fecha, setFecha] = useState<string>("");
   const [date, setDate] = useState(new Date());
   const [showDate, setShowDate] = useState<boolean>(false);
-
-  const FormatDate = (current: Date) => {
-    const day =
-      current.getDate() < 10 ? `0${current.getDate()}` : `${current.getDate()}`;
-
-    const month =
-      current.getMonth() + 1 < 10
-        ? `0${current.getMonth() + 1}`
-        : `${current.getMonth() + 1}`;
-
-    const year = current.getFullYear();
-    return `${year.toString()}-${month.toString()}-${day.toString()}`;
-  };
 
   useEffect(() => {
     const current = new Date();
