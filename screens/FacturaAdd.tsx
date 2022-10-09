@@ -81,7 +81,7 @@ export default function FacturaAdd({ navigation }: FacturaAddProps) {
           onPress: () =>
             navigation.navigate(Routes.FacturaDetails, {
               factura: result.factura,
-              navigateOrPush: false,
+              refreshData: true,
             }),
         },
       ]);

@@ -31,8 +31,8 @@ export type RootStackParamList = {
 
   // SCREENS
   // FACTURAS
-  [Routes.Facturas]: undefined;
-  [Routes.FacturaDetails]: { factura?: FacturaExt, navigateOrPush: boolean };
+  [Routes.Facturas]: { loadData: boolean };
+  [Routes.FacturaDetails]: { factura?: FacturaExt, refreshData: boolean };
   [Routes.FacturaEdit]: { collectionId: string };
   [Routes.FacturaAdd]: undefined;
 

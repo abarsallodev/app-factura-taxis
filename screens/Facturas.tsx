@@ -25,7 +25,7 @@ import { FacturasProps, Routes } from "../types/navigation";
 import Loader from "../components/Loader";
 import { FormatDate } from "../utils/functions";
 
-export default function Facturas({ navigation }: FacturasProps) {
+export default function Facturas({ navigation, route }: FacturasProps) {
   const [facturas, setFacturas] = useState<FacturaExt[]>([]);
   const [date, setDate] = useState(new Date());
   const [dateText, setDateText] = useState<string>("");
@@ -47,19 +47,31 @@ export default function Facturas({ navigation }: FacturasProps) {
 
   const fetchData = useCallback(async () => {
     setShowLoader(true);
-    const datos = await getFacturas(dateText);
-    setFacturas(datos);
+
+    if (route.params === undefined || route.params.loadData === true) {
+      const datos = await getFacturas(dateText);
+      setFacturas(datos);
+    }
+
     setShowLoader(false);
   }, [dateText]);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    // fetchData();
+    const unsubscribe = navigation.addListener("focus", () => {
+      fetchData();
+    });
+
+    return () => {
+      // Unsubscribe for the focus Listener
+      unsubscribe;
+    };
+  }, [fetchData, navigation]);
 
   const handleOnPress = (factura: FacturaExt) => {
     navigation.navigate(Routes.FacturaDetails, {
       factura: factura,
-      navigateOrPush: true,
+      refreshData: false,
     });
   };
 

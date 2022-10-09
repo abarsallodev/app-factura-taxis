@@ -11,9 +11,6 @@ export default function FacturaDetails(
   const factura: FacturaExt | undefined =
     facturaDetailsProps.route.params.factura;
 
-  const navigateOrPush: boolean =
-    facturaDetailsProps.route.params.navigateOrPush;
-
   const { navigation } = facturaDetailsProps;
 
   useEffect(() => {
@@ -22,11 +19,9 @@ export default function FacturaDetails(
         return (
           <HeaderBackButton
             onPress={() => {
-              if (navigateOrPush) {
-                navigation.navigate(Routes.Facturas);
-              } else {
-                navigation.push(Routes.Facturas);
-              }
+              navigation.navigate(Routes.Facturas, {
+                loadData: facturaDetailsProps.route.params.refreshData,
+              });
             }}
           />
         );
