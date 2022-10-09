@@ -1,3 +1,6 @@
+import { useState } from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import {
   collection,
@@ -14,7 +17,6 @@ import {
   limit,
   increment,
 } from "firebase/firestore";
-import { useState } from "react";
 
 import { db, auth } from "../config/firebase";
 import { FacturaBase, FacturaExt } from "../types/factura";
@@ -22,18 +24,51 @@ import { UserModel } from "../types/user";
 import { Result, ResultExtend } from "../types/utils";
 
 // Facturas API
-export const updateSecuencia = async () => {
+const getFacturaSecuencia = async (): Promise<number> => {
+  let facturaSecuencia: number = 0
+
+  try {
+    const value = await AsyncStorage.getItem('facturaSecuencia')
+    if (value !== null) {
+      facturaSecuencia = parseInt(value)
+    }
+    else {
+      const docRef = doc(db, "secuencia", "yxSPbk64CQDE8icNBqyJ");
+      const actual = await getDoc(docRef);
+
+      if (actual.exists()) {
+        facturaSecuencia = actual.data().factura_secuencia
+        await setFacturaSecuencia(facturaSecuencia)
+      }
+    }
+  } catch (e) {
+    // error reading value
+  }
+
+  return facturaSecuencia
+}
+
+const setFacturaSecuencia = async (value: number) => {
+  try {
+    await AsyncStorage.setItem('facturaSecuencia', value.toString())
+  } catch (e) {
+    // saving error
+  }
+}
+
+export const updateSecuenciaFirebase = async () => {
   let count = 0;
   try {
+    count = await getFacturaSecuencia() + 1
+
     const docRef = doc(db, "secuencia", "yxSPbk64CQDE8icNBqyJ");
     const actual = await getDoc(docRef);
 
-    if (actual.exists()) {
-      count = actual.data().factura_secuencia + 1;
-      const result = await setDoc(docRef, {
-        factura_secuencia: count,
-      });
-    }
+    const result = await setDoc(docRef, {
+      factura_secuencia: count,
+    });
+
+    await setFacturaSecuencia(count)
   } catch (error) {
     console.log(error);
   }
@@ -69,12 +104,13 @@ export const getFactura = async (id: string): Promise<FacturaBase> => {
         numeroRegistro: data.num_registro,
       };
     }
-  } catch (error: any) {}
+  } catch (error: any) { }
 
   return factura;
 };
 
 export const getFacturas = async (filtro: string) => {
+  console.log('Call Function')
   let facturas: FacturaExt[] = [];
 
   let q;
@@ -93,17 +129,17 @@ export const getFacturas = async (filtro: string) => {
 
     facturas = querySnapshot.docs.map(
       (doc) =>
-        ({
-          collectionId: doc.id,
-          userId: auth.currentUser?.uid,
-          cedula: doc.data().cedula,
-          receipt: doc.data().receipt,
-          fecha: doc.data().fecha,
-          nombre: doc.data().nombre,
-          numeroPlaca: doc.data().num_placa,
-          numeroRegistro: doc.data().num_registro,
-          monto: doc.data().monto,
-        } as FacturaExt)
+      ({
+        collectionId: doc.id,
+        userId: auth.currentUser?.uid,
+        cedula: doc.data().cedula,
+        receipt: doc.data().receipt,
+        fecha: doc.data().fecha,
+        nombre: doc.data().nombre,
+        numeroPlaca: doc.data().num_placa,
+        numeroRegistro: doc.data().num_registro,
+        monto: doc.data().monto,
+      } as FacturaExt)
     );
   } catch (error) {
     console.log(error);
@@ -115,13 +151,15 @@ export const getFacturas = async (filtro: string) => {
 export const saveFactura = async (
   factura: FacturaBase
 ): Promise<ResultExtend> => {
-  let result: ResultExtend = { type: false, message: "", collectionId: "" };
+  let result: ResultExtend = { type: false, message: "", factura: undefined };
 
   try {
-    const facturaNumber = await updateSecuencia();
+    const facturaNumber = await updateSecuenciaFirebase();
+
+    const userId = auth.currentUser?.uid ?? "";
 
     const docRef = await addDoc(collection(db, "facturas"), {
-      userId: auth.currentUser?.uid,
+      userId: userId,
       cedula: factura.cedula,
       receipt: facturaNumber,
       fecha: factura.fecha,
@@ -130,13 +168,23 @@ export const saveFactura = async (
       num_registro: factura.numeroRegistro,
       monto: factura.monto,
     });
-    result = {
-      type: true,
-      message: "Factura guardad exitosamente.",
+
+    result.type = true;
+    result.message = "Factura guardad exitosamente.";
+    result.factura = {
+      userId: userId,
+      receipt: facturaNumber,
+      cedula: factura.cedula,
+      fecha: factura.fecha,
+      nombre: factura.nombre,
+      monto: factura.monto,
+      numeroPlaca: factura.numeroPlaca,
+      numeroRegistro: factura.numeroRegistro,
       collectionId: docRef.id,
     };
-  } catch (error: any) {
-    result = { type: false, message: error.message, collectionId: "" };
+  }
+  catch (error: any) {
+    result = { type: false, message: error.message, factura: undefined };
   }
 
   return result;
@@ -176,14 +224,14 @@ export const GetUsers = async () => {
     const querySnapshot = await getDocs(q);
     users = querySnapshot.docs.map(
       (doc) =>
-        ({
-          userId: doc.data().userId,
-          email: doc.data().email,
-          name: doc.data().name,
-          password: "",
-          rol: doc.data().rol,
-          enabled: doc.data().enabled,
-        } as UserModel)
+      ({
+        userId: doc.data().userId,
+        email: doc.data().email,
+        name: doc.data().name,
+        password: "",
+        rol: doc.data().rol,
+        enabled: doc.data().enabled,
+      } as UserModel)
     );
   } catch (error) {
     console.log(error);

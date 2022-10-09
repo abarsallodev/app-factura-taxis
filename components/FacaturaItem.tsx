@@ -29,14 +29,12 @@ export default function FacturaItem(props: Props): JSX.Element {
             <Text style={{ fontSize: 18, ...styles.title }}>{receipt}</Text>
           </View>
           <View style={styles.rowContainer}>
-            <View style={styles.rowContainer}>
-              <Text style={styles.title}>Nombre:</Text>
-              <Text style={styles.value}>{nombre}</Text>
-            </View>
-            <View style={styles.rowContainer}>
-              <Text style={styles.title}>Cedula:</Text>
-              <Text style={styles.value}>{cedula}</Text>
-            </View>
+            <Text style={styles.title}>Nombre:</Text>
+            <Text style={styles.value}>{nombre}</Text>
+          </View>
+          <View style={styles.rowContainer}>
+            <Text style={styles.title}>Cedula:</Text>
+            <Text style={styles.value}>{cedula}</Text>
           </View>
           <View style={styles.rowContainer}>
             <View style={styles.rowContainer}>

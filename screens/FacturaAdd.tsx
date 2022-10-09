@@ -7,6 +7,9 @@ import {
   TouchableOpacity,
   Button,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
 } from "react-native";
 import DatePicker, {
   DateTimePickerEvent,
@@ -15,16 +18,18 @@ import { saveFactura } from "../storage/api";
 import { FacturaAddProps, Routes } from "../types/navigation";
 
 import { FormatDate } from "../utils/functions";
+import Loader from "../components/Loader";
 
 export default function FacturaAdd({ navigation }: FacturaAddProps) {
   const [nombre, setNombre] = useState<string>("");
   const [cedula, setCedula] = useState<string>("");
   const [placa, setPlaca] = useState<string>("");
   const [registro, setRegistro] = useState<string>("");
-  const [monto, setMonto] = useState<string>("0");
+  const [monto, setMonto] = useState<string>("");
   const [fecha, setFecha] = useState<string>("");
   const [date, setDate] = useState(new Date());
   const [showDate, setShowDate] = useState<boolean>(false);
+  const [showLoader, setShowLoader] = useState<boolean>(false);
 
   useEffect(() => {
     const current = new Date();
@@ -45,13 +50,15 @@ export default function FacturaAdd({ navigation }: FacturaAddProps) {
   };
 
   const handleSubmit = async () => {
+    setShowLoader(true);
     if (
       nombre === "" ||
       cedula === "" ||
       placa === "" ||
       registro === "" ||
-      monto === "0"
+      monto === ""
     ) {
+      setShowLoader(false);
       Alert.alert("Mensaje!", "Debe llenar todos los campos.", [
         { text: "Cerrar" },
       ]);
@@ -67,12 +74,14 @@ export default function FacturaAdd({ navigation }: FacturaAddProps) {
         numeroRegistro: registro,
       });
 
+      setShowLoader(false);
       Alert.alert(result.type ? "Mensaje!" : "Error!", result.message, [
         {
           text: "Cerrar",
           onPress: () =>
             navigation.navigate(Routes.FacturaDetails, {
-              collectionId: result.collectionId,
+              factura: result.factura,
+              navigateOrPush: false,
             }),
         },
       ]);
@@ -80,62 +89,83 @@ export default function FacturaAdd({ navigation }: FacturaAddProps) {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Registrar Factura</Text>
-      <View style={{ flex: 1, alignItems: "center" }}>
-        <View style={styles.fullContainer}>
-          <Text style={styles.label}>Nombre</Text>
-          <TextInput
-            style={{ width: 350, ...styles.input }}
-            onChangeText={(text) => setNombre(text)}
-            value={nombre}
-            underlineColorAndroid="transparent"
-            autoCapitalize="none"
-          />
-        </View>
-        <View style={styles.fullContainer}>
-          <Text style={styles.label}>Cedula</Text>
-          <TextInput
-            style={{ width: 350, ...styles.input }}
-            onChangeText={(text) => setCedula(text.toUpperCase())}
-            value={cedula}
-            underlineColorAndroid="transparent"
-            autoCapitalize="none"
-          />
-        </View>
-        <View style={{ flexDirection: "row", width: 350, marginBottom: 10 }}>
-          <View style={styles.leftContainer}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      style={styles.container}
+    >
+      <ScrollView
+        contentInsetAdjustmentBehavior="always"
+        overScrollMode="always"
+        showsVerticalScrollIndicator={true}
+      >
+        {/* <View style={styles.container}> */}
+        {showLoader && <Loader message="Guardando información, espere." />}
+        <Text style={styles.header}>Registrar Factura</Text>
+        <View style={{ flex: 1, alignItems: "center" }}>
+          <View style={styles.fullContainer}>
+            <Text style={styles.label}>Nombre</Text>
+            <TextInput
+              style={{ width: 350, ...styles.input }}
+              onChangeText={(text) => setNombre(text)}
+              value={nombre}
+              underlineColorAndroid="transparent"
+              autoCapitalize="none"
+            />
+          </View>
+
+          <View style={styles.fullContainer}>
+            <Text style={styles.label}>Cedula</Text>
+            <TextInput
+              style={{ width: 350, ...styles.input }}
+              onChangeText={(text) => setCedula(text.toUpperCase())}
+              value={cedula}
+              underlineColorAndroid="transparent"
+              autoCapitalize="none"
+            />
+          </View>
+
+          <View style={styles.fullContainer}>
             <Text style={styles.label}>Número de Placa</Text>
             <TextInput
-              style={{ ...styles.input }}
+              style={{ width: 350, ...styles.input }}
               onChangeText={(text) => setPlaca(text.toUpperCase())}
               value={placa}
               underlineColorAndroid="transparent"
               autoCapitalize="none"
             />
           </View>
-          <View style={styles.rightContainer}>
+
+          <View style={styles.fullContainer}>
             <Text style={styles.label}>Número de Registro</Text>
             <TextInput
-              style={{ ...styles.input }}
+              style={{ width: 350, ...styles.input }}
               onChangeText={(text) => setRegistro(text.toUpperCase())}
               value={registro}
               underlineColorAndroid="transparent"
               autoCapitalize="none"
             />
           </View>
-        </View>
-        <View style={{ flexDirection: "row", width: 350, marginBottom: 10 }}>
-          <View style={styles.leftContainer}>
+
+          <View style={styles.fullContainer}>
             <Text style={styles.label}>Monto</Text>
             <TextInput
-              style={{ ...styles.input }}
+              style={{ width: 350, ...styles.input }}
               onChangeText={(text) => setMonto(text)}
               value={monto}
               underlineColorAndroid="transparent"
               keyboardType="decimal-pad"
               autoCapitalize="none"
             />
+          </View>
+
+          <View style={styles.fullContainer}>
+            <Text style={styles.label}>Fecha</Text>
+            <TouchableOpacity
+              onPress={() => setShowDate(true)}
+              activeOpacity={0}
+            >
+              <Text style={{ width: 350, ...styles.input }}>{fecha}</Text>
+            </TouchableOpacity>
           </View>
 
           {useMemo(() => {
@@ -152,21 +182,13 @@ export default function FacturaAdd({ navigation }: FacturaAddProps) {
             );
           }, [showDate])}
 
-          <View style={styles.rightContainer}>
-            <Text style={styles.label}>Fecha</Text>
-            <TouchableOpacity
-              onPress={() => setShowDate(true)}
-              activeOpacity={0}
-            >
-              <Text style={{ ...styles.input }}>{fecha}</Text>
-            </TouchableOpacity>
+          <View>
+            <Button title="Guardar Factura" onPress={() => handleSubmit()} />
           </View>
         </View>
-        <View>
-          <Button title="Guardar Factura" onPress={() => handleSubmit()} />
-        </View>
-      </View>
-    </View>
+        {/* </View> */}
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 

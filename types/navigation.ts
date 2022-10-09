@@ -1,4 +1,5 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { FacturaExt } from "../types/factura";
 
 export enum Routes {
   Login = "Login",
@@ -31,7 +32,7 @@ export type RootStackParamList = {
   // SCREENS
   // FACTURAS
   [Routes.Facturas]: undefined;
-  [Routes.FacturaDetails]: { collectionId: string };
+  [Routes.FacturaDetails]: { factura?: FacturaExt, navigateOrPush: boolean };
   [Routes.FacturaEdit]: { collectionId: string };
   [Routes.FacturaAdd]: undefined;
 

@@ -7,12 +7,19 @@ import {
   View,
 } from "react-native";
 
-export default function Loader(message: string) {
+interface LoaderProps {
+  message: string;
+}
+
+export default function Loader(props: LoaderProps) {
+  const { message } = props;
   return (
     <View style={[styles.container]}>
       <View style={styles.loaderBox}>
         <ActivityIndicator size="large" color="#0984e3" />
-        <Text style={styles.message}>{message && "Cargando ... "}</Text>
+        <Text style={styles.message}>
+          {message === "" ? "Cargando ... " : message}
+        </Text>
       </View>
     </View>
   );

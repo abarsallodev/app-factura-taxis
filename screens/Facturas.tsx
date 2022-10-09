@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import {
   Alert,
   Button,
@@ -45,32 +45,27 @@ export default function Facturas({ navigation }: FacturasProps) {
     setShowDate(false);
   };
 
+  const fetchData = useCallback(async () => {
+    setShowLoader(true);
+    const datos = await getFacturas(dateText);
+    setFacturas(datos);
+    setShowLoader(false);
+  }, [dateText]);
+
   useEffect(() => {
-    const unsubscribe = async () => {
-      const datos = await getFacturas(dateText);
-      setFacturas(datos);
-    };
-
-    try {
-      unsubscribe();
-    } catch (error) {
-      console.log(error);
-    }
-
-    // return () => {
-    //   unsubscribe;
-    // };
-  }, [setFacturas, facturas, dateText]);
+    fetchData();
+  }, [fetchData]);
 
   const handleOnPress = (factura: FacturaExt) => {
     navigation.navigate(Routes.FacturaDetails, {
-      collectionId: factura.collectionId,
+      factura: factura,
+      navigateOrPush: true,
     });
   };
 
   return (
     <View style={styles.container}>
-      {showLoader && <Loader message="" />}
+      {showLoader && <Loader message="Cargando Datos..." />}
 
       <TouchableOpacity
         style={styles.floatinButton}

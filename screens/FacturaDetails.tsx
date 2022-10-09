@@ -6,54 +6,67 @@ import { getFactura } from "../storage/api";
 import { HeaderBackButton } from "@react-navigation/elements";
 
 export default function FacturaDetails(
-  facturaDetail: FacturaDetailsProps
+  facturaDetailsProps: FacturaDetailsProps
 ): JSX.Element {
-  const collectionId = facturaDetail.route.params.collectionId;
-  const [factura, setFactura] = useState<FacturaBase>();
-  const { navigation } = facturaDetail;
+  const factura: FacturaExt | undefined =
+    facturaDetailsProps.route.params.factura;
+
+  const navigateOrPush: boolean =
+    facturaDetailsProps.route.params.navigateOrPush;
+
+  const { navigation } = facturaDetailsProps;
 
   useEffect(() => {
     navigation.setOptions({
       headerLeft: () => {
         return (
           <HeaderBackButton
-            onPress={() => navigation.navigate(Routes.Facturas)}
+            onPress={() => {
+              if (navigateOrPush) {
+                navigation.navigate(Routes.Facturas);
+              } else {
+                navigation.push(Routes.Facturas);
+              }
+            }}
           />
         );
       },
     });
   }, [navigation]);
 
-  useEffect(() => {
-    const unsubscribe = async () => {
-      const datos = await getFactura(collectionId);
-
-      if (datos.receipt === 0) {
-        console.log("error");
-      } else {
-        setFactura({
-          cedula: datos.cedula,
-          userId: datos.userId,
-          receipt: datos.receipt,
-          fecha: datos.fecha,
-          nombre: datos.nombre,
-          monto: datos.monto,
-          numeroPlaca: datos.numeroPlaca,
-          numeroRegistro: datos.numeroRegistro,
-        });
-      }
-    };
-
-    try {
-      unsubscribe();
-    } catch (error) {
-      console.log(error);
-    }
-  }, [setFactura]);
-
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Factura # {factura?.receipt}</Text>
+      <Text style={styles.header}>Factura # {factura?.receipt}</Text>
+
+      <View style={{ ...styles.row }}>
+        <Text style={{ ...styles.title }}>Nombre:</Text>
+        <Text style={styles.value}>{factura?.nombre}</Text>
+      </View>
+
+      <View style={{ ...styles.row }}>
+        <Text style={styles.title}>Cédula:</Text>
+        <Text style={styles.value}>{factura?.cedula}</Text>
+      </View>
+
+      <View style={{ ...styles.row }}>
+        <Text style={styles.title}>Número de Placa:</Text>
+        <Text style={styles.value}>{factura?.numeroPlaca}</Text>
+      </View>
+
+      <View style={{ ...styles.row }}>
+        <Text style={styles.title}>Número de Registro:</Text>
+        <Text style={styles.value}>{factura?.numeroRegistro}</Text>
+      </View>
+
+      <View style={{ ...styles.row }}>
+        <Text style={styles.title}>Monto:</Text>
+        <Text style={styles.value}>{factura?.monto}</Text>
+      </View>
+
+      <View style={{ ...styles.row }}>
+        <Text style={styles.title}>Fecha:</Text>
+        <Text style={styles.value}>{factura?.fecha}</Text>
+      </View>
     </View>
   );
 }
@@ -63,16 +76,29 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     alignItems: "center",
-    // justifyContent: "center",
     backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderColor: "#babdbe",
-    borderRadius: 2,
     padding: 15,
   },
-  title: {
-    fontSize: 16,
+  header: {
+    fontSize: 24,
     fontWeight: "bold",
+  },
+  row: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    borderBottomColor: "#efefef",
+    borderBottomWidth: 1,
+    paddingVertical: 10,
+    marginBottom: 10,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  value: {
+    fontSize: 18,
+    paddingHorizontal: 5,
   },
   item: {
     // width: "100%",

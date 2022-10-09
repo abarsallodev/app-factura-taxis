@@ -67,19 +67,23 @@ function FacturasNavigation() {
       <FacturasStack.Screen
         name={Routes.Facturas}
         component={Facturas}
-        options={{ ...navigationGenericOptions }}
+        options={{ ...navigationGenericOptions, headerTitleAlign: "center" }}
       />
       <FacturasStack.Screen
         name={Routes.FacturaDetails}
         component={FacturaDetails}
-        options={{ ...navigationGenericOptions }}
+        options={{ ...navigationGenericOptions, headerTitleAlign: "center" }}
       />
       <FacturasStack.Screen
         name={Routes.FacturaEdit}
         component={FacturaEdit}
         options={{ ...navigationGenericOptions }}
       />
-      <FacturasStack.Screen name={Routes.FacturaAdd} component={FacturaAdd} />
+      <FacturasStack.Screen
+        name={Routes.FacturaAdd}
+        component={FacturaAdd}
+        options={{ ...navigationGenericOptions, headerTitleAlign: "center" }}
+      />
     </FacturasStack.Navigator>
   );
 }
