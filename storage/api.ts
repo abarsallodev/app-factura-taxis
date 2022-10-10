@@ -1,5 +1,4 @@
-import { useState } from "react";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import {
@@ -25,41 +24,40 @@ import { Result, ResultExtend } from "../types/utils";
 
 // Facturas API
 const getFacturaSecuencia = async (): Promise<number> => {
-  let facturaSecuencia: number = 0
+  let facturaSecuencia: number = 0;
 
   try {
-    const value = await AsyncStorage.getItem('facturaSecuencia')
+    const value = await AsyncStorage.getItem("facturaSecuencia");
     if (value !== null) {
-      facturaSecuencia = parseInt(value)
-    }
-    else {
+      facturaSecuencia = parseInt(value);
+    } else {
       const docRef = doc(db, "secuencia", "yxSPbk64CQDE8icNBqyJ");
       const actual = await getDoc(docRef);
 
       if (actual.exists()) {
-        facturaSecuencia = actual.data().factura_secuencia
-        await setFacturaSecuencia(facturaSecuencia)
+        facturaSecuencia = actual.data().factura_secuencia;
+        await setFacturaSecuencia(facturaSecuencia);
       }
     }
   } catch (e) {
     // error reading value
   }
 
-  return facturaSecuencia
-}
+  return facturaSecuencia;
+};
 
 const setFacturaSecuencia = async (value: number) => {
   try {
-    await AsyncStorage.setItem('facturaSecuencia', value.toString())
+    await AsyncStorage.setItem("facturaSecuencia", value.toString());
   } catch (e) {
     // saving error
   }
-}
+};
 
 export const updateSecuenciaFirebase = async () => {
   let count = 0;
   try {
-    count = await getFacturaSecuencia() + 1
+    count = (await getFacturaSecuencia()) + 1;
 
     const docRef = doc(db, "secuencia", "yxSPbk64CQDE8icNBqyJ");
     const actual = await getDoc(docRef);
@@ -68,7 +66,7 @@ export const updateSecuenciaFirebase = async () => {
       factura_secuencia: count,
     });
 
-    await setFacturaSecuencia(count)
+    await setFacturaSecuencia(count);
   } catch (error) {
     console.log(error);
   }
@@ -104,13 +102,13 @@ export const getFactura = async (id: string): Promise<FacturaBase> => {
         numeroRegistro: data.num_registro,
       };
     }
-  } catch (error: any) { }
+  } catch (error: any) {}
 
   return factura;
 };
 
 export const getFacturas = async (filtro: string) => {
-  console.log('Call Function')
+  console.log("Call Function");
   let facturas: FacturaExt[] = [];
 
   let q;
@@ -129,17 +127,17 @@ export const getFacturas = async (filtro: string) => {
 
     facturas = querySnapshot.docs.map(
       (doc) =>
-      ({
-        collectionId: doc.id,
-        userId: auth.currentUser?.uid,
-        cedula: doc.data().cedula,
-        receipt: doc.data().receipt,
-        fecha: doc.data().fecha,
-        nombre: doc.data().nombre,
-        numeroPlaca: doc.data().num_placa,
-        numeroRegistro: doc.data().num_registro,
-        monto: doc.data().monto,
-      } as FacturaExt)
+        ({
+          collectionId: doc.id,
+          userId: auth.currentUser?.uid,
+          cedula: doc.data().cedula,
+          receipt: doc.data().receipt,
+          fecha: doc.data().fecha,
+          nombre: doc.data().nombre,
+          numeroPlaca: doc.data().num_placa,
+          numeroRegistro: doc.data().num_registro,
+          monto: doc.data().monto,
+        } as FacturaExt)
     );
   } catch (error) {
     console.log(error);
@@ -182,8 +180,7 @@ export const saveFactura = async (
       numeroRegistro: factura.numeroRegistro,
       collectionId: docRef.id,
     };
-  }
-  catch (error: any) {
+  } catch (error: any) {
     result = { type: false, message: error.message, factura: undefined };
   }
 
@@ -224,14 +221,14 @@ export const GetUsers = async () => {
     const querySnapshot = await getDocs(q);
     users = querySnapshot.docs.map(
       (doc) =>
-      ({
-        userId: doc.data().userId,
-        email: doc.data().email,
-        name: doc.data().name,
-        password: "",
-        rol: doc.data().rol,
-        enabled: doc.data().enabled,
-      } as UserModel)
+        ({
+          userId: doc.data().userId,
+          email: doc.data().email,
+          name: doc.data().name,
+          password: "",
+          rol: doc.data().rol,
+          enabled: doc.data().enabled,
+        } as UserModel)
     );
   } catch (error) {
     console.log(error);
