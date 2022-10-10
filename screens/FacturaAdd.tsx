@@ -109,7 +109,7 @@ export default function FacturaAdd({ navigation }: FacturaAddProps) {
               onChangeText={(text) => setNombre(text)}
               value={nombre}
               underlineColorAndroid="transparent"
-              autoCapitalize="none"
+              autoCapitalize="characters"
             />
           </View>
 
@@ -117,10 +117,10 @@ export default function FacturaAdd({ navigation }: FacturaAddProps) {
             <Text style={styles.label}>Cedula</Text>
             <TextInput
               style={{ width: 350, ...styles.input }}
-              onChangeText={(text) => setCedula(text.toUpperCase())}
+              onChangeText={(text) => setCedula(text)}
               value={cedula}
               underlineColorAndroid="transparent"
-              autoCapitalize="none"
+              autoCapitalize="characters"
             />
           </View>
 
@@ -128,10 +128,10 @@ export default function FacturaAdd({ navigation }: FacturaAddProps) {
             <Text style={styles.label}>Número de Placa</Text>
             <TextInput
               style={{ width: 350, ...styles.input }}
-              onChangeText={(text) => setPlaca(text.toUpperCase())}
+              onChangeText={(text) => setPlaca(text)}
               value={placa}
               underlineColorAndroid="transparent"
-              autoCapitalize="none"
+              autoCapitalize="characters"
             />
           </View>
 
@@ -139,10 +139,10 @@ export default function FacturaAdd({ navigation }: FacturaAddProps) {
             <Text style={styles.label}>Número de Registro</Text>
             <TextInput
               style={{ width: 350, ...styles.input }}
-              onChangeText={(text) => setRegistro(text.toUpperCase())}
+              onChangeText={(text) => setRegistro(text)}
               value={registro}
               underlineColorAndroid="transparent"
-              autoCapitalize="none"
+              autoCapitalize={"characters"}
             />
           </View>
 
@@ -154,7 +154,6 @@ export default function FacturaAdd({ navigation }: FacturaAddProps) {
               value={monto}
               underlineColorAndroid="transparent"
               keyboardType="decimal-pad"
-              autoCapitalize="none"
             />
           </View>
 
