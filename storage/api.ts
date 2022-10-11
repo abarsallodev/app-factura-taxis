@@ -21,6 +21,7 @@ import { db, auth } from "../config/firebase";
 import { FacturaBase, FacturaExt } from "../types/factura";
 import { UserModel } from "../types/user";
 import { Result, ResultExtend } from "../types/utils";
+import { FormatDate } from "../utils/functions";
 
 // Facturas API
 const getFacturaSecuencia = async (): Promise<number> => {
@@ -102,18 +103,21 @@ export const getFactura = async (id: string): Promise<FacturaBase> => {
         numeroRegistro: data.num_registro,
       };
     }
-  } catch (error: any) {}
+  } catch (error: any) { }
 
   return factura;
 };
 
 export const getFacturas = async (filtro: string) => {
-  console.log("Call Function");
   let facturas: FacturaExt[] = [];
 
   let q;
   if (filtro === "") {
-    q = query(collection(db, "facturas"), orderBy("receipt", "desc"));
+    q = query(
+      collection(db, "facturas"),
+      where("fecha", "==", FormatDate(new Date())),
+      orderBy("receipt", "desc"),
+    );
   } else {
     q = query(
       collection(db, "facturas"),
@@ -127,17 +131,17 @@ export const getFacturas = async (filtro: string) => {
 
     facturas = querySnapshot.docs.map(
       (doc) =>
-        ({
-          collectionId: doc.id,
-          userId: auth.currentUser?.uid,
-          cedula: doc.data().cedula,
-          receipt: doc.data().receipt,
-          fecha: doc.data().fecha,
-          nombre: doc.data().nombre,
-          numeroPlaca: doc.data().num_placa,
-          numeroRegistro: doc.data().num_registro,
-          monto: doc.data().monto,
-        } as FacturaExt)
+      ({
+        collectionId: doc.id,
+        userId: auth.currentUser?.uid,
+        cedula: doc.data().cedula,
+        receipt: doc.data().receipt,
+        fecha: doc.data().fecha,
+        nombre: doc.data().nombre,
+        numeroPlaca: doc.data().num_placa,
+        numeroRegistro: doc.data().num_registro,
+        monto: doc.data().monto,
+      } as FacturaExt)
     );
   } catch (error) {
     console.log(error);
@@ -221,14 +225,14 @@ export const GetUsers = async () => {
     const querySnapshot = await getDocs(q);
     users = querySnapshot.docs.map(
       (doc) =>
-        ({
-          userId: doc.data().userId,
-          email: doc.data().email,
-          name: doc.data().name,
-          password: "",
-          rol: doc.data().rol,
-          enabled: doc.data().enabled,
-        } as UserModel)
+      ({
+        userId: doc.data().userId,
+        email: doc.data().email,
+        name: doc.data().name,
+        password: "",
+        rol: doc.data().rol,
+        enabled: doc.data().enabled,
+      } as UserModel)
     );
   } catch (error) {
     console.log(error);

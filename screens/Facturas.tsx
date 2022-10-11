@@ -26,6 +26,8 @@ import Loader from "../components/Loader";
 import { FormatDate } from "../utils/functions";
 
 export default function Facturas({ navigation, route }: FacturasProps) {
+  const { params } = route;
+
   const [facturas, setFacturas] = useState<FacturaExt[]>([]);
   const [date, setDate] = useState(new Date());
   const [dateText, setDateText] = useState<string>("");
@@ -37,7 +39,6 @@ export default function Facturas({ navigation, route }: FacturasProps) {
     selectedDate: Date | undefined
   ) => {
     const currentDate = selectedDate;
-
     if (currentDate != undefined) {
       setDateText(FormatDate(currentDate));
       setDate(currentDate);
@@ -45,28 +46,51 @@ export default function Facturas({ navigation, route }: FacturasProps) {
     setShowDate(false);
   };
 
-  const fetchData = useCallback(async () => {
+  const fetchData = async () => {
     setShowLoader(true);
 
-    if (route.params === undefined || route.params.loadData === true) {
-      const datos = await getFacturas(dateText);
-      setFacturas(datos);
-    }
+    const datos = await getFacturas(dateText);
+    setFacturas(datos);
 
     setShowLoader(false);
-  }, [dateText]);
+  };
 
   useEffect(() => {
-    // fetchData();
+    const unsubscribe = async () => {
+      await fetchData();
+    };
+
+    unsubscribe();
+    return () => {
+      // Unsubscribe for the focus Listener
+      unsubscribe;
+    };
+  }, []);
+
+  useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
-      fetchData();
+      console.log(params);
+      if (params !== undefined) {
+        fetchData();
+      }
     });
 
     return () => {
       // Unsubscribe for the focus Listener
       unsubscribe;
     };
-  }, [fetchData, navigation]);
+  }, [navigation]);
+
+  useEffect(() => {
+    const unsubscribe = async () => {
+      await fetchData();
+    };
+    unsubscribe();
+    return () => {
+      // Unsubscribe for the focus Listener
+      unsubscribe;
+    };
+  }, [dateText]);
 
   const handleOnPress = (factura: FacturaExt) => {
     navigation.navigate(Routes.FacturaDetails, {

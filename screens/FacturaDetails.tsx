@@ -1,8 +1,7 @@
 import { FacturaBase, FacturaExt } from "../types/factura";
 import { FacturaDetailsProps, Routes } from "../types/navigation";
 import { View, Text, StyleSheet, TouchableOpacity, Button } from "react-native";
-import React, { useEffect, useState } from "react";
-import { getFactura } from "../storage/api";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { HeaderBackButton } from "@react-navigation/elements";
 
 export default function FacturaDetails(
@@ -10,24 +9,23 @@ export default function FacturaDetails(
 ): JSX.Element {
   const factura: FacturaExt | undefined =
     facturaDetailsProps.route.params.factura;
+  const loadData = facturaDetailsProps.route.params.refreshData;
 
-  const { navigation } = facturaDetailsProps;
-
-  useEffect(() => {
-    navigation.setOptions({
+  useLayoutEffect(() => {
+    facturaDetailsProps.navigation.setOptions({
       headerLeft: () => {
         return (
           <HeaderBackButton
             onPress={() => {
-              navigation.navigate(Routes.Facturas, {
-                loadData: facturaDetailsProps.route.params.refreshData,
+              facturaDetailsProps.navigation.navigate(Routes.Facturas, {
+                loadData: loadData,
               });
             }}
           />
         );
       },
     });
-  }, [navigation]);
+  }, [facturaDetailsProps.navigation]);
 
   return (
     <View style={styles.container}>
