@@ -26,8 +26,6 @@ import Loader from "../components/Loader";
 import { FormatDate } from "../utils/functions";
 
 export default function Facturas({ navigation, route }: FacturasProps) {
-  const { params } = route;
-
   const [facturas, setFacturas] = useState<FacturaExt[]>([]);
   const [date, setDate] = useState(new Date());
   const [dateText, setDateText] = useState<string>("");
@@ -68,18 +66,12 @@ export default function Facturas({ navigation, route }: FacturasProps) {
   }, []);
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      console.log(params);
-      if (params !== undefined) {
+    if (route.params) {
+      if (route.params.loadData) {
         fetchData();
       }
-    });
-
-    return () => {
-      // Unsubscribe for the focus Listener
-      unsubscribe;
-    };
-  }, [navigation]);
+    }
+  }, [route.params]);
 
   useEffect(() => {
     const unsubscribe = async () => {
